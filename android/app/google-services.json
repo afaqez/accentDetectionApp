@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531503348047",
+    "project_id": "accentdetectionapp-182e1",
+    "storage_bucket": "accentdetectionapp-182e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531503348047:android:caf64842d78f400801ad3a",
+        "android_client_info": {
+          "package_name": "com.example.accent_detection_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArnSGYWEZAIkfJe58STs3y2K9aS7V4Gng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
