@@ -184,7 +184,7 @@ class _TTSpeechState extends State<STText> {
                           String downloadUrl = await _uploadRecording();
 
                           var apiUrl =
-                              'http://192.168.18.232:8000/predict-accent/?url=$downloadUrl';
+                              'https://accentdetectionapp.onrender.com/predict-accent/?url=$downloadUrl';
                           apiUrl = Uri.encodeFull(apiUrl);
 
                           // Making the API call
