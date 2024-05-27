@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 
 class STText extends StatefulWidget {
@@ -19,6 +23,8 @@ class _TTSpeechState extends State<STText> {
   FlutterSoundRecorder? _recorder;
   bool _isRecording = false;
   String? _filePath;
+  String accent = "";
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -52,7 +58,7 @@ class _TTSpeechState extends State<STText> {
     }
 
     Directory tempDir = await getTemporaryDirectory();
-    String tempPath = '${tempDir.path}/temp_audio.aac';
+    String tempPath = '${tempDir.path}/temp_audio.wav';
 
     setState(() {
       _filePath = tempPath;
@@ -72,7 +78,7 @@ class _TTSpeechState extends State<STText> {
   Future<String> _uploadRecording() async {
     String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
     Reference ref =
-        FirebaseStorage.instance.ref().child('$userId/$timestamp.aac');
+        FirebaseStorage.instance.ref().child('$userId/$timestamp.wav');
 
     await ref.putFile(File(_filePath!));
 
@@ -87,6 +93,7 @@ class _TTSpeechState extends State<STText> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
+          height: height,
           color: Colors.purple.shade200,
           child: Column(
             children: [
@@ -97,7 +104,7 @@ class _TTSpeechState extends State<STText> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                         top: 35,
                         left: 20,
                         right: 20,
@@ -117,7 +124,7 @@ class _TTSpeechState extends State<STText> {
                         ],
                       ),
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(
                         top: 20,
                         left: 30,
@@ -151,16 +158,17 @@ class _TTSpeechState extends State<STText> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                height: height * 0.6,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 color: Colors.white,
                 child: Column(
                   children: [
-                    SizedBox(height: 30),
-                    SizedBox(
+                    const SizedBox(height: 30),
+                    const SizedBox(
                       height: 50,
                     ),
                     GestureDetector(
@@ -170,41 +178,69 @@ class _TTSpeechState extends State<STText> {
                         });
                         if (_isRecording) {
                           await _stopRecording();
+                          setState(() {
+                            isLoading = true;
+                          });
                           String downloadUrl = await _uploadRecording();
-                          print("Download URL: $downloadUrl");
+
+                          var apiUrl =
+                              'http://192.168.18.232:8000/predict-accent/?url=$downloadUrl';
+                          apiUrl = Uri.encodeFull(apiUrl);
+
+                          // Making the API call
+                          var response = await http.get(Uri.parse(apiUrl));
+
+                          // Getting the response from the API
+                          var jsonResponse = jsonDecode(response.body);
+                          setState(() {
+                            accent =
+                                "The accent in the audio is ${jsonResponse['accent']}";
+                            isLoading = false;
+                          });
+                          print(accent);
                         } else {
                           await _startRecording();
                         }
                       },
                       child: AnimatedContainer(
-                        duration: Duration(milliseconds: 1000),
+                        duration: const Duration(milliseconds: 1000),
                         padding: EdgeInsets.all(isClicked ? 50 : 25),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors
                               .purple.shade200, // Change the color as needed
                         ),
-                        child: Icon(
-                          Icons.mic_none_sharp,
-                          size: isClicked ? 80 : 40,
-                          color: Colors.white,
-                        ),
+                        child: isLoading
+                            ? CircularProgressIndicator() // Loader
+                            : Icon(
+                                Icons.mic_none_sharp,
+                                size: isClicked ? 80 : 40,
+                                color: Colors.white,
+                              ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
-                    TextFormField(
-                      maxLines: 8,
-                      decoration: InputDecoration(
-                        hintText:
-                            'The text is .......', // Add your hint text here
-                        fillColor: Colors.purple.shade100.withOpacity(0.5),
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
+                    Container(
+                      width: width * 0.8,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.purple.shade200,
+                        borderRadius: BorderRadius.circular(25),
                       ),
+                      child: isLoading
+                          ? SizedBox.shrink() // Hide accent text if loading
+                          : Center(
+                              child: Text(
+                                accent,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ),
