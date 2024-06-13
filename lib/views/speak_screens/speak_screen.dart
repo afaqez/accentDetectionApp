@@ -224,7 +224,7 @@ class _TTSpeechState extends State<STText> {
                     ),
                     Container(
                       width: width * 0.8,
-                      height: 50,
+                      height: 200,
                       decoration: BoxDecoration(
                         color: Colors.purple.shade200,
                         borderRadius: BorderRadius.circular(25),

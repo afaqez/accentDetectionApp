@@ -12,7 +12,20 @@
           "package_name": "com.example.accent_detection_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "531503348047-qmks6v30i37del6s88fko4k0r2nu4g3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.accent_detection_app",
+            "certificate_hash": "64f317d91acf098034b47c8540323c0011547ecd"
+          }
+        },
+        {
+          "client_id": "531503348047-jon3qddb5ego6ofd6uoqu967b6kfth3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyArnSGYWEZAIkfJe58STs3y2K9aS7V4Gng"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531503348047-jon3qddb5ego6ofd6uoqu967b6kfth3k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "531503348047-1n90j4e8po61qsdbtar735mahh7nqpvc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.accentDetectionApp"
+              }
+            }
+          ]
         }
       }
     }
