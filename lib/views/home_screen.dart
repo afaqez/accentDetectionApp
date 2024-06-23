@@ -1,3 +1,7 @@
+import 'package:accent_detection_app/utils/launch_email.dart';
+import 'package:accent_detection_app/utils/launch_url.dart';
+import 'package:accent_detection_app/views/drawer_screens/privacy_policy_screen.dart';
+import 'package:accent_detection_app/views/drawer_screens/rating_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:accent_detection_app/views/user_authentication/login_page.dart';
@@ -84,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              " English Mastery",
+                              " Speak Right",
                               style: TextStyle(
                                 fontSize: 30,
                                 color: Colors.white,
@@ -193,8 +197,8 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Contact Us'),
               onTap: () {
+                launchEmail();
                 Navigator.pop(context); // Close the drawer
-                // Handle contact us action
               },
             ),
             Divider(
@@ -205,6 +209,7 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Share'),
               onTap: () {
+                launchUrl();
                 Navigator.pop(context); // Close the drawer
                 // Handle share action
               },
@@ -217,7 +222,12 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Rate'),
               onTap: () {
-                Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RatingScreen(),
+                  ),
+                );
                 // Handle rate action
               },
             ),
@@ -229,8 +239,12 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Privacy Policy'),
               onTap: () {
-                Navigator.pop(context); // Close the drawer
-                // Handle privacy policy action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrivacyPolicyScreen(),
+                  ),
+                );
               },
             ),
             Divider(

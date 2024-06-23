@@ -1,10 +1,12 @@
 // ignore_for_file: omit_local_variable_types
 
+import 'package:accent_detection_app/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'google_auth.dart';
 import 'login_page.dart';
+import 'dart:async';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -91,8 +93,45 @@ class SignUpPage extends StatelessWidget {
                       'email': emailController.text,
                     });
 
-                    // Navigate to the home page or perform any other action after successful signup
-                    Navigator.pop(context);
+                    var user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      await user.sendEmailVerification();
+
+                      // Provide feedback to the user about sending verification link on their email.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Verification link sent on your email. Please verify your account!'),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    } else {
+                      throw Exception("Error in sending email.");
+                    }
+
+                    // Periodically check for email verification
+                    Timer.periodic(Duration(seconds: 3), (timer) async {
+                      await FirebaseAuth.instance.currentUser?.reload();
+                      user = FirebaseAuth.instance.currentUser;
+                      if (user?.emailVerified ?? false) {
+                        timer.cancel(); // Cancel the timer
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Verify your account in order to proceed further.',
+                            ),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
+                    });
                   } catch (error) {
                     // Handle errors
                     print("Failed to sign up: $error");
